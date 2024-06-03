@@ -6,33 +6,31 @@
     ./programs
     ./scripts
     ./themes
+    
   ];
 
   home = {
-    username = "enzo";
-    homeDirectory = "/home/enzo";
+    username = "lasan";
+    homeDirectory = "/home/lasan";
   };
 
   home.packages = (with pkgs; [
     
     #User Apps
     celluloid
+    kitty
     discord
-    librewolf
-    cool-retro-term
     bibata-cursors
     vscode
     lollypop
-    lutris
-    openrgb
     betterdiscord-installer
-    
+    firefox
+    unityhub
 
     #utils
     ranger
     wlr-randr
     git
-    rustup
     gnumake
     catimg
     curl
@@ -46,7 +44,7 @@
     cava
     neovim
     nano
-    rofi
+    wofi
     nitch
     wget
     grim
@@ -55,16 +53,17 @@
     pamixer
     mpc-cli
     tty-clock
-    exa
     btop
+    gedit
     tokyo-night-gtk
+    ntfs3g
+
 
   ]) ++ (with pkgs.gnome; [ 
     nautilus
     zenity
     gnome-tweaks
     eog
-    gedit
   ]);
 
   dconf.settings = {

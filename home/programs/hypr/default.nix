@@ -14,11 +14,11 @@
   wayland.windowManager.hyprland = {
     enable = true;
     systemdIntegration = true;
-    nvidiaPatches = true;
     extraConfig = ''
+    exec-once=/nix/store/nc3fis9947rpakhni034hm9c4dfjda79-dbus-1.14.8/bin/dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP && systemctl --user start hyprland-session.target
 
     # Monitor
-    monitor=DP-1,1920x1080@165,auto,1
+    monitor=DP-1,1920x1080@60,auto,1
 
     # Fix slow startup
     exec systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
@@ -26,19 +26,21 @@
 
     # Autostart
 
+    exec-once = hyprpaper
     exec-once = hyprctl setcursor Bibata-Modern-Classic 24
     exec-once = dunst
+    exec-once = hyprctl hyprpaper wallpaper "DP-1,/home/lasan/.config/wall.jpg"
 
-    source = /home/enzo/.config/hypr/colors
+    source = /home/lasan/.config/hypr/colors
     exec = pkill waybar & sleep 0.5 && waybar
-    exec-once = swww init & sleep 0.5 && exec wallpaper_random
+#    exec-once = swww init & sleep 0.5 && exec wallpaper_random
     # exec-once = wallpaper_random
 
     # Set en layout at startup
 
     # Input config
     input {
-        kb_layout = br,us
+        kb_layout = us
         kb_variant =
         kb_model =
         kb_options =
@@ -56,7 +58,7 @@
     general {
 
         gaps_in = 5
-        gaps_out = 20
+        gaps_out = 5
         border_size = 2
         col.active_border = rgba(33ccffee) rgba(00ff99ee) 45deg
         col.inactive_border = rgba(595959aa)
@@ -100,67 +102,90 @@
     }
 
     gestures {
-        workspace_swipe = false
+        workspace_swipe = true
     }
-
+    
     # Example windowrule v1
     # windowrule = float, ^(kitty)$
     # Example windowrule v2
     # windowrulev2 = float,class:^(kitty)$,title:^(kitty)$
 
-    windowrule=float,^(kitty)$
     windowrule=float,^(pavucontrol)$
-    windowrule=center,^(kitty)$
     windowrule=float,^(blueman-manager)$
-    windowrule=size 600 500,^(kitty)$
     windowrule=size 934 525,^(mpv)$
     windowrule=float,^(mpv)$
     windowrule=center,^(mpv)$
     #windowrule=pin,^(firefox)$
 
+    windowrulev2=workspace 2,class:^(firefox)$
+    windowrulev2=workspace 3,class:^(kitty|code-url-handler)$
+    windowrulev2=workspace 1,class:^(org.gnome.Nautilus)$
+    #windowrulev2=workspace 2,class:^(firefox)$
+    #windowrulev2=workspace 2,class:^(firefox)$
+    #windowrulev2=workspace 2,class:^(firefox)$
     $mainMod = SUPER
     bind = $mainMod, G, fullscreen,
 
 
     #bind = $mainMod, RETURN, exec, cool-retro-term-zsh
     bind = $mainMod, RETURN, exec, kitty
-    bind = $mainMod, B, exec, opera --no-sandbox
-    bind = $mainMod, L, exec, firefox 
+ #   bind = $mainMod, B, exec, opera --no-sandbox
+    bind = $mainMod, B, exec, firefox 
+    bind = $mainMod SHIFT, B, exec, firefox --private-window
     bind = $mainMod, Q, killactive,
     bind = $mainMod, M, exit,
-    bind = $mainMod, F, exec, nautilus
+    bind = $mainMod, S, exec, nautilus
     bind = $mainMod, V, togglefloating,
-    bind = $mainMod, w, exec, wofi --show drun
+    bind = $mainMod, E, exec, wofi --show drun
     bind = $mainMod, R, exec, rofiWindow
     bind = $mainMod, P, pseudo, # dwindle
-    bind = $mainMod, J, togglesplit, # dwindle
+#    bind = $mainMod, J, togglesplit, # dwindle
 
     # Switch Keyboard Layouts
-    bind = $mainMod, SPACE, exec, hyprctl switchxkblayout teclado-gamer-husky-blizzard next
+#    bind = $mainMod, SPACE, exec, hyprctl switchxkblayout teclado-gamer-husky-blizzard next
 
     bind = , Print, exec, grim -g "$(slurp)" - | wl-copy
+    bind = $mainMod, P, exec, grim -g "$(slurp)" - | wl-copy
     bind = SHIFT, Print, exec, grim -g "$(slurp)"
+    bind = $mainMod SHIFT, P, exec, grim -g "$(slurp)"
 
     # Functional keybinds
     bind =,XF86AudioMicMute,exec,pamixer --default-source -t
-    bind =,XF86MonBrightnessDown,exec,light -U 20
-    bind =,XF86MonBrightnessUp,exec,light -A 20
+    binde =,XF86MonBrightnessDown,exec,light -U 20
+    binde =,XF86MonBrightnessUp,exec,light -A 20
+    binde = $mainMod,minus,exec,brightnessctl s 10%-
+    binde = $mainMod,equal,exec,brightnessctl s +10%
     bind =,XF86AudioMute,exec,pamixer -t
-    bind =,XF86AudioLowerVolume,exec,pamixer -d 10
-    bind =,XF86AudioRaiseVolume,exec,pamixer -i 10
-    bind =,XF86AudioPlay,exec,playerctl play-pause
+    binde =,XF86AudioLowerVolume,exec,pamixer -d 10
+    binde = $mainMod,bracketright,exec,pamixer -i 10
+    binde = $mainMod,bracketleft,exec,pamixer -d 10
+#    bind =$mainMod,
+    binde =,XF86AudioRaiseVolume,exec,pamixer -i 10
+    binde =,XF86AudioPlay,exec,playerctl play-pause
     bind =,XF86AudioPause,exec,playerctl play-pause
 
     # to switch between windows in a floating workspace
-    bind = SUPER,Tab,cyclenext,
+#    bind = SUPER,,cyclenext,
     bind = SUPER,Tab,bringactivetotop,
 
     # Move focus with mainMod + arrow keys
-    bind = $mainMod, left, movefocus, l
-    bind = $mainMod, right, movefocus, r
-    bind = $mainMod, up, movefocus, u
-    bind = $mainMod, down, movefocus, d
-
+    bind = $mainMod, j, movefocus, l
+    bind = $mainMod, k, movefocus, r
+    bind = $mainMod, i, movefocus, u
+    bind = $mainMod, m, movefocus, d
+    
+    #fullscreen
+    bind = $mainMod,c,fullscreen,0
+    # grouping
+    bind = $mainMod, T, togglegroup
+    bind = $mainMod SHIFT, J, moveintogroup,l
+    bind = $mainMod SHIFT, K, moveintogroup,r
+    bind = $mainMod SHIFT, I, moveintogroup,u
+    bind = $mainMod SHIFT, L, moveintogroup,d
+    bind = $mainMod CTRL, J, changegroupactive,b
+    bind = $mainMod CTRL, K, changegroupactive,f
+    bind = $mainMod, N, moveoutofgroup
+    
     # Switch workspaces with mainMod + [0-9]
     bind = $mainMod, 1, workspace, 1
     bind = $mainMod, 2, workspace, 2
@@ -172,6 +197,10 @@
     bind = $mainMod, 8, workspace, 8
     bind = $mainMod, 9, workspace, 9
     bind = $mainMod, 0, workspace, 10
+
+    #resizing
+    binde = $mainMod, H , resizeactive, -30 0
+    binde = $mainMod, L, resizeactive, 30 0
 
     # Move active window to a workspace with mainMod + SHIFT + [0-9]
     bind = $mainMod SHIFT, 1, movetoworkspace, 1
@@ -193,28 +222,7 @@
     bindm = $mainMod, mouse:272, movewindow
     bindm = $mainMod, mouse:273, resizewindow
     bindm = ALT, mouse:272, resizewindow
-        '';
-  };
 
-      home.file.".config/hypr/colors".text = ''
-$background = rgba(1d192bee)
-$foreground = rgba(c3dde7ee)
-
-$color0 = rgba(1d192bee)
-$color1 = rgba(465EA7ee)
-$color2 = rgba(5A89B6ee)
-$color3 = rgba(6296CAee)
-$color4 = rgba(73B3D4ee)
-$color5 = rgba(7BC7DDee)
-$color6 = rgba(9CB4E3ee)
-$color7 = rgba(c3dde7ee)
-$color8 = rgba(889aa1ee)
-$color9 = rgba(465EA7ee)
-$color10 = rgba(5A89B6ee)
-$color11 = rgba(6296CAee)
-$color12 = rgba(73B3D4ee)
-$color13 = rgba(7BC7DDee)
-$color14 = rgba(9CB4E3ee)
-$color15 = rgba(c3dde7ee)
     '';
+};
 }

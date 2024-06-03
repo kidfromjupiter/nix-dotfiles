@@ -7,7 +7,7 @@ inputs = {
    url = "github:nix-community/home-manager";
    inputs.nixpkgs.follows = "nixpkgs";
   };
-  hyprland.url = "github:hyprwm/Hyprland";
+  hyprland.url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
 };
 
 outputs = { self, nixpkgs, home-manager, hyprland, ...}: 
@@ -22,7 +22,7 @@ let
 
 in {
 nixosConfigurations = {
-    enzo = lib.nixosSystem rec {
+    lasan = lib.nixosSystem rec {
       inherit system;
       specialArgs = { inherit hyprland; };
       modules = [ 
@@ -32,7 +32,7 @@ nixosConfigurations = {
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users.enzo = import ./home/home.nix ;
+          home-manager.users.lasan = import ./home/home.nix ;
           home-manager.extraSpecialArgs = specialArgs;
         }
       ];

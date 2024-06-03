@@ -33,54 +33,29 @@
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
 
-  time.timeZone = "America/Sao_Paulo";
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "pt_BR.UTF-8";
-    LC_IDENTIFICATION = "pt_BR.UTF-8";
-    LC_MEASUREMENT = "pt_BR.UTF-8";
-    LC_MONETARY = "pt_BR.UTF-8";
-    LC_NAME = "pt_BR.UTF-8";
-    LC_NUMERIC = "pt_BR.UTF-8";
-    LC_PAPER = "pt_BR.UTF-8";
-    LC_TELEPHONE = "pt_BR.UTF-8";
-    LC_TIME = "pt_BR.UTF-8";
+  swapDevices = [
+  {
+    device = "/dev/nvme0n1p9";
+    priority = 1;
+  }
+  ];
+  fileSystems = {
+    "/mnt/Data" = {
+      device = "/dev/sda1";
+      fsType = "ntfs";
+      options = ["nofail" "fmask=0022" "dmask=0022"];
+    };
   };
+
+  time.timeZone = "Asia/Colombo";
 
    services.xserver = {
    enable = true;
-   videoDrivers = ["nvidia"];
     # X11 keymap
-    layout = "br";
+    layout = "us";
     xkbVariant = "";
   };
 
-  #NvidiaConfig
-  hardware.opengl = {
-    enable = true;
-    driSupport = true;
-    driSupport32Bit = true;
-  };
-
-  nixpkgs.config.allowUnfreePredicate = pkg:
-    builtins.elem (lib.getName pkg) [
-      "#nvidia-x11"
-    ];
-
-  hardware.nvidia = {
-    modesetting.enable = true;
-    open = false;
-
-    nvidiaSettings = true;
-    package = config.boot.kernelPackages.nvidiaPackages.latest;
-  };
-
-  programs.steam = {
-   enable = true;
-   remotePlay.openFirewall = true;
-   dedicatedServer.openFirewall = true;
-  };
-  # Configure console keymap
-  console.keyMap = "br-abnt2";
 
   sound.enable = true;
   hardware.pulseaudio.enable = false;
@@ -106,15 +81,19 @@
   environment.systemPackages = with pkgs; [
   libevdev
 ];
+  zramSwap = {
+    enable = true;
+    priority = 10;
+    memoryPercent = 65;
+    
+  };
   
-  users.users.enzo = {
+  users.users.lasan = {
     isNormalUser = true;
-    description = "Enzo";
+    description = "Lasan";
     extraGroups = [ "networkmanager" "wheel" "docker" ];
     packages = with pkgs; [
       firefox
-      (opera.override { proprietaryCodecs = true; })
-      neofetch
       lolcat
    ];
   };
@@ -129,12 +108,7 @@
     options = "--delete-older-than 7d";
   };
 
-  system.autoUpgrade = {
-   enable = true;
-   channel = "https://nixos.org/channels/nixos-23.05";
-  };
- 
-  system.stateVersion = "23.05";
+  system.stateVersion = "23.11";
   
   #Flakes
   nix = {

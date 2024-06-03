@@ -84,7 +84,7 @@ ou
 
 ```bash
 $ cd Hyprland-dotfiles
-$ sudo nixos-rebuild switch --flake .#enzo
+$ sudo nixos-rebuild switch --flake .#lasan
 ```
 
 ## 
